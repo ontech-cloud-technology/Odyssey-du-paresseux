@@ -398,7 +398,7 @@
     <nav class="glass sticky top-0 z-50 p-4 mb-8">
         <div class="container mx-auto flex justify-between items-center">
             <div class="title-font text-2xl font-bold gradient-text flex items-center gap-3">
-                <img src="/static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="nav-logo logo-img floating">
+                <img src="../static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="nav-logo logo-img floating">
                 <span>L'Odyssée du Paresseux</span>
             </div>
             <div class="hidden md:flex gap-6">
@@ -442,7 +442,7 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <div class="glass rounded-2xl p-6 card-hover">
-                    <img src="/static/images/directeur.png" alt="Ahmad, Directeur de L'Odyssée du Paresseux" class="directeur-img">
+                    <img src="../static/images/directeur.png" alt="Ahmad, Directeur de L'Odyssée du Paresseux" class="directeur-img">
                     <h3 class="text-2xl font-bold text-readable-strong mb-4 text-center">Ahmad, Directeur</h3>
                     <p class="text-readable leading-relaxed mb-4">
                         À la tête de "L'Odyssée du Paresseux" se trouve Ahmad, un visionnaire passionné par la conservation de la faune et la protection des écosystèmes tropicaux.
@@ -485,7 +485,7 @@
                 <h3 class="text-2xl font-bold text-readable-strong mb-4 text-center">Ajouter une Image à la Galerie</h3>
                 <form id="galerieForm" class="space-y-4">
                     <input type="text" id="galerieTitre" placeholder="Titre de l'image" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
-                    <input type="text" id="galerieImage" placeholder="Chemin de l'image (ex: /static/images/sloth1.jpg)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
+                    <input type="text" id="galerieImage" placeholder="Chemin de l'image (ex: ../static/images/sloth1.jpg)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
                     <textarea id="galerieDescription" placeholder="Description..." rows="3" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300"></textarea>
                     <button type="submit" class="w-full btn-glow glass-strong px-6 py-3 rounded-lg text-readable-strong font-bold hover:scale-105 transition-transform">
                         Ajouter à la Galerie
@@ -598,7 +598,7 @@
     <footer class="glass-strong mt-20 p-8 text-center relative z-10">
         <div class="container mx-auto">
             <div class="title-font text-3xl font-bold gradient-text mb-4 flex items-center justify-center gap-3">
-                <img src="/static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="footer-logo logo-img">
+                <img src="../static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="footer-logo logo-img">
                 <span>L'Odyssée du Paresseux</span>
             </div>
             <p class="text-readable mb-2">Directeur : Ahmad</p>
@@ -609,7 +609,7 @@
             <p class="text-readable text-sm opacity-80">© 2025 L'Odyssée du Paresseux. Tous droits réservés.</p>
             <!-- Bouton admin caché - invisible mais cliquable en bas du footer -->
             <div class="mt-4 h-6 relative">
-                <button onclick="window.location.href='/admin'" 
+                <button onclick="window.location.href="admin.html"" 
                         class="absolute inset-0 opacity-0 hover:opacity-0" 
                         style="cursor: pointer;"
                         title="Admin">
@@ -618,8 +618,8 @@
         </div>
     </footer>
     
-    <script src="/static/app.js"></script>
-    <script src="/static/sloth-air-features.js"></script>
+    <script src="../static/app.js"></script>
+    <script src="../static/sloth-air-features.js"></script>
 </body>
 </html>
 

@@ -1,8 +1,374 @@
-{% extends "base.html" %}
-
-{% block title %}L'Odyssée du Paresseux - Sloth Air{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Odyssée du Paresseux - Sloth Air</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a5f3f 0%, #2d8659 15%, #3fa76b 30%, #52c884 45%, #6dd99f 60%, #4a9d6e 75%, #2e7d4e 90%, #1a5f3f 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(56, 142, 60, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(27, 94, 32, 0.2) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .glass {
+            background: rgba(20, 50, 30, 0.45);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-strong {
+            background: rgba(15, 40, 25, 0.55);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .text-readable {
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        .text-readable-strong {
+            color: #ffffff;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .title-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #81c784 0%, #66bb6a 50%, #4caf50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-glow:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .directeur-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            display: block;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .directeur-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(15, 40, 25, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            .sidebar-overlay {
+                display: none;
+            }
+        }
+        
+        /* Chat Widget Styles */
+        .chat-widget-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.6);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-widget-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.8);
+        }
+        
+        .chat-widget-button.active {
+            background: linear-gradient(135deg, #66bb6a 0%, #81c784 100%);
+        }
+        
+        .chat-popup {
+            position: fixed;
+            bottom: 5rem;
+            right: 2rem;
+            width: 380px;
+            max-width: calc(100vw - 4rem);
+            height: 500px;
+            max-height: calc(100vh - 8rem);
+            background: rgba(15, 40, 25, 0.95);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-popup.hidden {
+            display: none;
+        }
+        
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        @media (max-width: 640px) {
+            .chat-popup {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                bottom: 5rem;
+            }
+            
+            .chat-widget-button {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+    
+</head>
+<body class="relative">
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay hidden md:hidden" onclick="toggleSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar -translate-x-full md:translate-x-0">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-3">
+                    <img src="../static/images/logo.png" alt="Logo" class="h-12 w-12 rounded-full object-cover">
+                    <h2 class="title-font text-xl font-bold gradient-text">Menu</h2>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-readable hover:text-green-200 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="Sloth-air.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-home mr-3"></i> Accueil
+                </a>
+                <a href="Sloth-air.html#directeur" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-user-tie mr-3"></i> Le Directeur
+                </a>
+                <a href="Sloth-air.html#galerie" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-images mr-3"></i> Galerie
+                </a>
+                <a href="Sloth-air.html#conservation" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-leaf mr-3"></i> Conservation
+                </a>
+                <a href="Sloth-air.html#temoignages" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-comments mr-3"></i> Témoignages
+                </a>
+                <a href="Sloth-air.html#objectif" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-bullseye mr-3"></i> Notre Objectif
+                </a>
+                <div class="border-t border-white/20 my-4"></div>
+                <a href="carte-costa-rica.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-map mr-3"></i> Carte Costa Rica
+                </a>
+                <a href="jeu-paresseux.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-gamepad mr-3"></i> Jeu Paresseux
+                </a>
+                <a href="chat-equipe.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-comments mr-3"></i> Chat Équipe
+                </a>
+                <a href="visite-virtuelle.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-vr-cardboard mr-3"></i> Visite Virtuelle
+                </a>
+                <a href="quiz.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-question-circle mr-3"></i> Quiz
+                </a>
+                <a href="meteo.html" class="block glass rounded-lg p-4 text-readable hover:bg-white/10 transition">
+                    <i class="fas fa-cloud-sun mr-3"></i> Météo
+                </a>
+            </nav>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="md:ml-[280px] transition-all duration-300">
+        <!-- Navigation Top -->
+        <nav class="glass sticky top-0 z-50 p-4 mb-8">
+            <div class="container mx-auto flex justify-between items-center">
+                <button onclick="toggleSidebar()" class="md:hidden text-readable hover:text-green-200 text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="title-font text-2xl font-bold gradient-text flex items-center gap-3 mx-auto md:mx-0">
+                    <img src="../static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="h-10 w-10 rounded-full object-cover">
+                    <span>L'Odyssée du Paresseux</span>
+                </div>
+                <div class="hidden md:flex gap-4">
+                    <a href="admin.html" class="text-readable hover:text-green-200 transition text-sm opacity-70">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        
 <!-- Section Hero -->
 <section id="accueil" class="container mx-auto px-4 py-20 relative z-10">
     <div class="glass-strong rounded-3xl p-12 text-center max-w-4xl mx-auto">
@@ -26,7 +392,7 @@
         </h2>
         <div class="grid md:grid-cols-2 gap-8 items-center">
             <div class="glass rounded-2xl p-6 card-hover">
-                <img src="/static/images/directeur.png" alt="Ahmad, Directeur de L'Odyssée du Paresseux" class="directeur-img">
+                <img src="../static/images/directeur.png" alt="Ahmad, Directeur de L'Odyssée du Paresseux" class="directeur-img">
                 <h3 class="text-2xl font-bold text-readable-strong mb-4 text-center">Ahmad, Directeur</h3>
                 <p class="text-readable leading-relaxed mb-4">
                     À la tête de "L'Odyssée du Paresseux" se trouve Ahmad, un visionnaire passionné par la conservation de la faune et la protection des écosystèmes tropicaux.
@@ -69,7 +435,7 @@
             <h3 class="text-2xl font-bold text-readable-strong mb-4 text-center">Ajouter une Image à la Galerie</h3>
             <form id="galerieForm" class="space-y-4">
                 <input type="text" id="galerieTitre" placeholder="Titre de l'image" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
-                <input type="text" id="galerieImage" placeholder="Chemin de l'image (ex: /static/images/sloth1.jpg)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
+                <input type="text" id="galerieImage" placeholder="Chemin de l'image (ex: ../static/images/sloth1.jpg)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
                 <textarea id="galerieDescription" placeholder="Description..." rows="3" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300"></textarea>
                 <button type="submit" class="w-full btn-glow glass-strong px-6 py-3 rounded-lg text-readable-strong font-bold hover:scale-105 transition-transform">
                     Ajouter à la Galerie
@@ -177,14 +543,66 @@
         </div>
     </div>
 </section>
-{% endblock %}
 
-{% block extra_js %}
-<script src="/static/app.js"></script>
+        
+        <!-- Footer -->
+        <footer class="glass-strong mt-20 p-8 text-center relative z-10">
+            <div class="container mx-auto">
+                <div class="title-font text-3xl font-bold gradient-text mb-4 flex items-center justify-center gap-3">
+                    <img src="../static/images/logo.png" alt="Logo L'Odyssée du Paresseux" class="h-16 w-16 rounded-full object-cover">
+                    <span>L'Odyssée du Paresseux</span>
+                </div>
+                <p class="text-readable mb-2">Directeur : Ahmad</p>
+                <p class="text-readable mb-2">Bureau Principal : Laval</p>
+                <p class="text-readable mb-4">
+                    Contact : <a href="mailto:info.ahmadnature@gmail.com" class="text-green-200 hover:text-green-300 font-semibold">info.ahmadnature@gmail.com</a>
+                </p>
+                <p class="text-readable text-sm opacity-80">© 2025 L'Odyssée du Paresseux. Tous droits réservés.</p>
+            </div>
+        </footer>
+    </main>
+    
+    <!-- Chat Widget Flottant -->
+    <button id="chatWidget" onclick="toggleChat()" class="chat-widget-button" title="Chat avec l'équipe">
+        💬
+    </button>
+    
+    <div id="chatPopup" class="chat-popup hidden">
+        <div class="chat-header">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-green-500/30 flex items-center justify-center">
+                    🦥
+                </div>
+                <div>
+                    <h3 class="text-readable-strong font-bold">Chat avec l'Équipe</h3>
+                    <p class="text-readable text-xs opacity-70">En ligne</p>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-readable hover:text-red-300 text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages chargés dynamiquement -->
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Tapez votre message..." class="flex-1 px-4 py-2 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
+            <button onclick="sendChatMessage()" class="btn-glow glass-strong px-4 py-2 rounded-lg text-readable-strong font-bold hover:scale-105 transition-transform">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    
+    <script src="../static/sidebar.js"></script>
+    <script src="../static/chat-widget.js"></script>
+    
+<script src="../static/app.js"></script>
 <script>
 function scrollToSection(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
-{% endblock %}
+
+</body>
+</html>
 
