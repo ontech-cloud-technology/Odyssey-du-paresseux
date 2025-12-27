@@ -168,7 +168,7 @@
         <nav class="glass sticky top-0 z-50 p-4 mb-6">
             <div class="container mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <img src="../static/images/logo.png" alt="Logo" class="h-10 w-10 rounded-full object-cover">
+                    <img src="/static/images/logo.png" alt="Logo" class="h-10 w-10 rounded-full object-cover">
                     <h1 class="text-2xl font-bold text-readable-strong">Panneau d'Administration</h1>
                 </div>
                 <div class="flex items-center gap-4">
@@ -285,7 +285,7 @@
                             <h3 class="text-xl font-bold text-readable-strong mb-4">Ajouter une Image</h3>
                             <form id="addImageForm" class="space-y-4">
                                 <input type="text" id="newImageTitre" placeholder="Titre" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
-                                <input type="text" id="newImagePath" placeholder="Chemin (ex: ../static/images/image.png)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
+                                <input type="text" id="newImagePath" placeholder="Chemin (ex: /static/images/image.png)" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300">
                                 <textarea id="newImageDescription" placeholder="Description" rows="3" class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300"></textarea>
                                 <button type="submit" class="btn-success px-6 py-3 rounded-lg text-white font-bold hover:scale-105 transition-transform">
                                     <i class="fas fa-plus"></i> Ajouter
@@ -356,7 +356,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-readable mb-2">Image (URL ou chemin) *</label>
-                                    <input type="text" id="newProductImage" required class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300" placeholder="../static/images/produit.jpg">
+                                    <input type="text" id="newProductImage" required class="w-full px-4 py-3 rounded-lg glass text-readable placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-green-300" placeholder="/static/images/produit.jpg">
                                 </div>
                                 <button type="submit" class="btn-success px-6 py-3 rounded-lg text-white font-bold hover:scale-105 transition-transform">
                                     <i class="fas fa-plus"></i> Ajouter le produit
@@ -515,7 +515,7 @@
         </div>
     </div>
     
-    <script src="../static/admin.js"></script>
+    <script src="/static/admin.js"></script>
 </body>
 </html>
 
