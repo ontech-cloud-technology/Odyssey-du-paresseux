@@ -30,9 +30,9 @@ Le serveur démarre sur le port **5001** (configurable via la variable d'environ
 ```
 Mimo/
 ├── app.py                 # Serveur Flask
+├── index.html             # Page principale
 ├── requirements.txt       # Dépendances Python
-├── templates/
-│   └── index.html        # Page principale
+├── templates/            # Autres templates
 ├── static/
 │   ├── app.js            # JavaScript avec gestion localStorage
 │   └── images/           # Dossier des images
