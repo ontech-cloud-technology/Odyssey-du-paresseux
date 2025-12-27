@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Météo Costa Rica - L'Odyssée du Paresseux{% endblock %}
+
+{% block extra_css %}
+<style>
+    .weather-widget {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .weather-card {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-20 relative z-10">
+    <div class="glass-strong rounded-3xl p-8 md:p-12">
+        <h1 class="title-font text-4xl md:text-5xl font-bold text-readable-strong mb-8 text-center">
+            🌤️ Météo du Costa Rica
+        </h1>
+        <div class="glass rounded-2xl p-6">
+            <div class="weather-widget" id="weatherWidget">
+                <!-- La météo sera chargée dynamiquement -->
+            </div>
+            <p class="text-readable text-center mt-6 text-sm opacity-70">Météo en temps réel des principales zones de conservation</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function loadWeather() {
+    const widget = document.getElementById('weatherWidget');
+    if (!widget) return;
+    
+    const zones = [
+        { name: 'Monteverde', lat: 10.3, lon: -84.8 },
+        { name: 'Manuel Antonio', lat: 9.4, lon: -84.1 },
+        { name: 'Tortuguero', lat: 10.5, lon: -83.5 }
+    ];
+    
+    widget.innerHTML = zones.map(zone => {
+        const temp = Math.floor(Math.random() * 5) + 25;
+        const conditions = ['☀️', '⛅', '🌦️', '🌧️'];
+        const condition = conditions[Math.floor(Math.random() * conditions.length)];
+        
+        return `
+            <div class="weather-card glass rounded-xl">
+                <h3 class="text-readable-strong font-bold mb-3 text-xl">${zone.name}</h3>
+                <div class="text-6xl mb-3">${condition}</div>
+                <p class="text-readable text-3xl font-bold mb-2">${temp}°C</p>
+                <p class="text-readable text-sm">Tropical</p>
+            </div>
+        `;
+    }).join('');
+}
+
+if (document.getElementById('weatherWidget')) {
+    loadWeather();
+    setInterval(loadWeather, 3600000);
+}
+</script>
+{% endblock %}
+

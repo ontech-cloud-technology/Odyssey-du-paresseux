@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Le Monde des Paresseux - Jeu Interactif{% endblock %}
+
+{% block extra_css %}
+<style>
+    .game-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        background: rgba(15, 40, 25, 0.98);
+        backdrop-filter: blur(20px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .game-header {
+        background: rgba(15, 40, 25, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 1rem 2rem;
+        border-bottom: 2px solid rgba(76, 175, 80, 0.5);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .game-iframe-container {
+        flex: 1;
+        width: 100%;
+        height: calc(100vh - 80px);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .game-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+    }
+    
+    .game-iframe-error {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .game-iframe-error.hidden {
+        display: none;
+    }
+    
+    .open-new-window-btn {
+        margin-top: 1rem;
+    }
+    
+    .close-button {
+        background: rgba(220, 38, 38, 0.8);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .close-button:hover {
+        background: rgba(220, 38, 38, 1);
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);
+    }
+    
+    .game-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .game-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 40, 25, 0.95);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        transition: opacity 0.5s ease;
+    }
+    
+    .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(76, 175, 80, 0.3);
+        border-top: 4px solid #4caf50;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .game-content {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    
+    .game-preview {
+        max-width: 800px;
+        width: 100%;
+        background: rgba(15, 40, 25, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 2rem;
+        padding: 3rem;
+        text-align: center;
+        border: 2px solid rgba(76, 175, 80, 0.5);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Fenêtre plein écran pour le jeu -->
+<div id="gameFullscreen" class="game-fullscreen hidden">
+    <div class="game-header">
+        <div class="game-info">
+            <h2 class="game-title">🦥 Le Monde des Paresseux</h2>
+        </div>
+        <button onclick="closeGameFullscreen()" class="close-button">
+            <i class="fas fa-times"></i> Fermer
+        </button>
+    </div>
+    <div class="game-iframe-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <p class="text-readable text-xl font-bold">Chargement du jeu...</p>
+        </div>
+        <div class="game-iframe-error hidden" id="iframeError">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h3 class="text-readable-strong text-2xl font-bold mb-4">Impossible de charger le jeu dans cette fenêtre</h3>
+            <p class="text-readable text-lg mb-6">
+                Le site utilise des protections de sécurité qui empêchent l'affichage dans une fenêtre intégrée.
+            </p>
+            <button onclick="openGameInNewWindow()" class="btn-glow glass-strong px-8 py-4 rounded-full text-readable-strong font-bold text-lg hover:scale-110 transition-transform open-new-window-btn">
+                <i class="fas fa-external-link-alt mr-2"></i>
+                Ouvrir dans une nouvelle fenêtre
+            </button>
+        </div>
+        <iframe 
+            id="gameIframe"
+            class="game-iframe"
+            src="https://le-monde-des-paresseux.my.canva.site/"
+            allow="fullscreen"
+            allowfullscreen
+            loading="lazy"
+            onload="hideLoading()"
+            onerror="showIframeError()">
+        </iframe>
+    </div>
+</div>
+
+<!-- Page d'accueil du jeu -->
+<section class="container mx-auto px-4 py-20 relative z-10">
+    <div class="glass-strong rounded-3xl p-8 md:p-12">
+        <h1 class="title-font text-4xl md:text-5xl font-bold text-readable-strong mb-8 text-center">
+            🦥 Le Monde des Paresseux
+        </h1>
+        
+        <div class="game-content">
+            <div class="game-preview">
+                <div class="text-8xl mb-6">🦥</div>
+                <h2 class="text-3xl font-bold text-readable-strong mb-4">
+                    Aventure Interactive
+                </h2>
+                <p class="text-readable text-lg mb-6 leading-relaxed">
+                    Plongez dans le monde fascinant des paresseux ! Explorez leur habitat naturel, 
+                    découvrez leurs secrets et participez à une aventure interactive unique.
+                </p>
+                <p class="text-readable text-sm mb-8 opacity-80">
+                    Le jeu s'ouvrira en plein écran pour une expérience immersive optimale.
+                </p>
+                <div class="flex flex-col gap-4">
+                    <button onclick="openGameInNewWindow()" class="btn-glow glass-strong px-8 py-4 rounded-full text-readable-strong font-bold text-lg hover:scale-110 transition-transform">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        Ouvrir le Jeu (Nouvelle Fenêtre)
+                    </button>
+                    <button onclick="openGameFullscreen()" class="glass px-6 py-3 rounded-lg text-readable font-semibold hover:scale-105 transition-transform">
+                        <i class="fas fa-window-maximize mr-2"></i>
+                        Essayer dans cette fenêtre
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openGameFullscreen() {
+    // Essayer d'ouvrir directement dans une nouvelle fenêtre
+    // car Canva bloque souvent les iframes
+    openGameInNewWindow();
+    
+    // Alternative : essayer l'iframe (peut ne pas fonctionner)
+    const fullscreen = document.getElementById('gameFullscreen');
+    if (fullscreen) {
+        fullscreen.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Vérifier après 3 secondes si l'iframe a chargé
+        setTimeout(() => {
+            const iframe = document.getElementById('gameIframe');
+            const errorDiv = document.getElementById('iframeError');
+            if (iframe && iframe.contentWindow) {
+                try {
+                    // Tester si on peut accéder au contenu
+                    iframe.contentWindow.document;
+                } catch (e) {
+                    // Si erreur, c'est que l'iframe est bloquée
+                    showIframeError();
+                }
+            } else {
+                showIframeError();
+            }
+        }, 3000);
+    }
+}
+
+function openGameInNewWindow() {
+    const url = 'https://le-monde-des-paresseux.my.canva.site/';
+    const newWindow = window.open(url, '_blank', 'width=1920,height=1080,scrollbars=yes,resizable=yes');
+    
+    if (newWindow) {
+        newWindow.focus();
+        // Fermer la fenêtre fullscreen si elle est ouverte
+        closeGameFullscreen();
+    } else {
+        alert('Veuillez autoriser les pop-ups pour ce site afin d\'ouvrir le jeu.');
+    }
+}
+
+function showIframeError() {
+    const loading = document.getElementById('loadingOverlay');
+    const error = document.getElementById('iframeError');
+    const iframe = document.getElementById('gameIframe');
+    
+    if (loading) loading.classList.add('hidden');
+    if (error) error.classList.remove('hidden');
+    if (iframe) iframe.style.display = 'none';
+}
+
+function closeGameFullscreen() {
+    const fullscreen = document.getElementById('gameFullscreen');
+    if (fullscreen) {
+        fullscreen.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+function hideLoading() {
+    const loading = document.getElementById('loadingOverlay');
+    if (loading) {
+        setTimeout(() => {
+            loading.classList.add('hidden');
+        }, 500);
+    }
+}
+
+// Fermer avec la touche Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeGameFullscreen();
+    }
+});
+
+// Gestion du plein écran natif (optionnel)
+function toggleFullscreen() {
+    const fullscreen = document.getElementById('gameFullscreen');
+    if (!fullscreen) return;
+    
+    if (!document.fullscreenElement) {
+        fullscreen.requestFullscreen().catch(err => {
+            console.log('Erreur plein écran:', err);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Détecter la sortie du plein écran
+document.addEventListener('fullscreenchange', function() {
+    if (!document.fullscreenElement) {
+        closeGameFullscreen();
+    }
+});
+</script>
+{% endblock %}
