@@ -421,6 +421,89 @@
     <script src="/static/sidebar.js"></script>
     <script src="/static/chat-widget.js"></script>
     {% block extra_js %}{% endblock %}
+    <script>
+    // #region agent log
+    (function() {
+        const logEndpoint = 'http://127.0.0.1:7244/ingest/476dbfcd-be7f-4e55-87ca-f67a69dfc239';
+        function log(msg, data, hypothesisId) {
+            fetch(logEndpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    location: 'base.html:image-debug',
+                    message: msg,
+                    data: data || {},
+                    timestamp: Date.now(),
+                    sessionId: 'debug-session',
+                    runId: 'run1',
+                    hypothesisId: hypothesisId || 'A'
+                })
+            }).catch(() => {});
+        }
+        
+        // Test des chemins d'images
+        log('Début test images', {baseURL: window.location.origin, pathname: window.location.pathname}, 'B');
+        
+        // Tester le chargement de chaque image
+        const imagePaths = [
+            '/static/images/logo.png',
+            '/static/images/directeur.png',
+            'static/images/logo.png',
+            '../static/images/logo.png'
+        ];
+        
+        imagePaths.forEach((path, idx) => {
+            const img = new Image();
+            const testPath = path;
+            log('Test chargement image', {path: testPath, index: idx}, 'B');
+            
+            img.onload = function() {
+                log('Image chargée avec succès', {path: testPath, width: img.width, height: img.height}, 'B');
+            };
+            
+            img.onerror = function() {
+                log('Erreur chargement image', {path: testPath, error: 'onerror triggered'}, 'A');
+            };
+            
+            img.src = testPath;
+        });
+        
+        // Vérifier toutes les images dans le DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            const allImages = document.querySelectorAll('img');
+            log('Images trouvées dans DOM', {count: allImages.length}, 'E');
+            
+            allImages.forEach((img, idx) => {
+                log('Image DOM', {
+                    index: idx,
+                    src: img.src,
+                    currentSrc: img.currentSrc,
+                    complete: img.complete,
+                    naturalWidth: img.naturalWidth,
+                    naturalHeight: img.naturalHeight
+                }, 'E');
+                
+                if (!img.complete) {
+                    img.onload = function() {
+                        log('Image DOM chargée', {index: idx, src: img.src, width: img.naturalWidth}, 'E');
+                    };
+                    img.onerror = function() {
+                        log('Image DOM erreur', {index: idx, src: img.src, attemptedSrc: img.currentSrc}, 'A');
+                    };
+                }
+            });
+        });
+        
+        // Vérifier la configuration Firebase
+        log('Configuration page', {
+            protocol: window.location.protocol,
+            host: window.location.host,
+            pathname: window.location.pathname,
+            href: window.location.href
+        }, 'B');
+    })();
+    // #endregion
+    </script>
 </body>
 </html>
 

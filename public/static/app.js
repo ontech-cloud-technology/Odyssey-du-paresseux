@@ -15,6 +15,9 @@ function initLocalStorage() {
     }
     
     // Images de paresseux disponibles
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/476dbfcd-be7f-4e55-87ca-f67a69dfc239',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:imagesParesseux',message:'Définition chemins images',data:{baseURL:window.location.origin,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     const imagesParesseux = [
         '/static/images/FG8w5Ji.png',
         '/static/images/LRcBNsj.png',
@@ -174,7 +177,7 @@ function loadGalerie() {
         const imageHtml = `
             <div class="relative mb-4" style="height: 250px; overflow: hidden; border-radius: 1rem;">
                 <img src="${imageSrc}" alt="${item.titre || 'Paresseux'}" class="gallery-image" 
-                     onerror="this.onerror=null; this.src='${imagesParesseux[0]}';">
+                     onerror="this.onerror=null; fetch('http://127.0.0.1:7244/ingest/476dbfcd-be7f-4e55-87ca-f67a69dfc239',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app.js:galerie',message:'Erreur chargement image galerie',data:{originalSrc:this.src,fallbackSrc:'${imagesParesseux[0]}'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{}); this.src='${imagesParesseux[0]}';">
             </div>
         `;
         

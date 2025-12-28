@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Images</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a1a; color: white; }
+        .test { margin: 20px 0; padding: 20px; background: #2a2a2a; border-radius: 8px; }
+        img { max-width: 200px; margin: 10px; border: 2px solid #4caf50; }
+        .error { color: #ff4444; }
+        .success { color: #4caf50; }
+    </style>
+</head>
+<body>
+    <h1>Test de chargement des images</h1>
+    <div class="test">
+        <h2>Test 1: Chemin absolu /static/images/logo.png</h2>
+        <img id="img1" src="/static/images/logo.png" alt="Logo" onload="logSuccess(1)" onerror="logError(1, this.src)">
+        <div id="result1"></div>
+    </div>
+    <div class="test">
+        <h2>Test 2: Chemin relatif static/images/logo.png</h2>
+        <img id="img2" src="static/images/logo.png" alt="Logo" onload="logSuccess(2)" onerror="logError(2, this.src)">
+        <div id="result2"></div>
+    </div>
+    <div class="test">
+        <h2>Test 3: Chemin ../static/images/logo.png</h2>
+        <img id="img3" src="../static/images/logo.png" alt="Logo" onload="logSuccess(3)" onerror="logError(3, this.src)">
+        <div id="result3"></div>
+    </div>
+    <div class="test">
+        <h2>Test 4: directeur.png</h2>
+        <img id="img4" src="/static/images/directeur.png" alt="Directeur" onload="logSuccess(4)" onerror="logError(4, this.src)">
+        <div id="result4"></div>
+    </div>
+    
+    <script>
+    // #region agent log
+    const logEndpoint = 'http://127.0.0.1:7244/ingest/476dbfcd-be7f-4e55-87ca-f67a69dfc239';
+    function log(msg, data, hypothesisId) {
+        fetch(logEndpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                location: 'test-images.html',
+                message: msg,
+                data: data || {},
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: hypothesisId || 'A'
+            })
+        }).catch(() => {});
+    }
+    
+    log('Page test chargée', {
+        baseURL: window.location.origin,
+        pathname: window.location.pathname,
+        protocol: window.location.protocol
+    }, 'B');
+    // #endregion
+    
+    function logSuccess(num) {
+        const img = document.getElementById('img' + num);
+        const result = document.getElementById('result' + num);
+        result.innerHTML = '<span class="success">✓ Image chargée avec succès</span>';
+        result.innerHTML += '<br>Dimensions: ' + img.naturalWidth + 'x' + img.naturalHeight;
+        result.innerHTML += '<br>Source: ' + img.src;
+        // #region agent log
+        log('Image chargée', {testNum: num, src: img.src, width: img.naturalWidth, height: img.naturalHeight}, 'B');
+        // #endregion
+    }
+    
+    function logError(num, attemptedSrc) {
+        const result = document.getElementById('result' + num);
+        result.innerHTML = '<span class="error">✗ Erreur de chargement</span>';
+        result.innerHTML += '<br>Source tentée: ' + attemptedSrc;
+        // #region agent log
+        log('Erreur chargement image', {testNum: num, attemptedSrc: attemptedSrc}, 'A');
+        // #endregion
+    }
+    
+    // Test avec fetch
+    // #region agent log
+    fetch('/static/images/logo.png')
+        .then(r => {
+            log('Fetch test logo.png', {
+                status: r.status,
+                statusText: r.statusText,
+                ok: r.ok,
+                type: r.type
+            }, 'A');
+        })
+        .catch(e => {
+            log('Fetch erreur logo.png', {error: e.message}, 'A');
+        });
+    // #endregion
+    </script>
+</body>
+</html>
+

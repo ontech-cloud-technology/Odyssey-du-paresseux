@@ -78,6 +78,62 @@ Une fois le serveur lancé, accédez au site via :
 http://localhost:5001
 ```
 
+## 🔥 Déploiement Firebase Hosting
+
+Le projet est configuré pour Firebase Hosting uniquement.
+
+### Configuration Firebase
+
+Les fichiers de configuration Firebase sont déjà créés :
+- `firebase.json` : Configuration du hosting
+- `.firebaserc` : Configuration du projet (mimo-76d62)
+- `static/firebase-config.js` : Configuration Firebase côté client
+
+### Déployer sur Firebase Hosting
+
+1. **Se connecter à Firebase** (si ce n'est pas déjà fait) :
+```bash
+firebase login
+```
+
+2. **Déployer le site** :
+```bash
+firebase deploy --only hosting
+```
+
+3. **Voir le site en ligne** :
+   Le site sera disponible à l'adresse : `https://mimo-76d62.web.app` ou `https://mimo-76d62.firebaseapp.com`
+
+### Utiliser Firebase dans le code
+
+Pour utiliser Firebase dans vos fichiers HTML/JS, vous pouvez soit :
+
+**Option 1 : Utiliser le module configuré** (recommandé)
+```html
+<script type="module">
+  import { app } from './static/firebase-config.js';
+  // Utiliser app ici
+</script>
+```
+
+**Option 2 : Inline dans le HTML**
+```html
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyDSJONgLDetXUCsCaWBalU7e_MDYi_DLKg",
+    authDomain: "mimo-76d62.firebaseapp.com",
+    projectId: "mimo-76d62",
+    storageBucket: "mimo-76d62.firebasestorage.app",
+    messagingSenderId: "23119171300",
+    appId: "1:23119171300:web:9943993dfcbe9f840f26f1"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+</script>
+```
+
 ## 📧 Contact
 
 Directeur : Ahmad
