@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification Images</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a1a; color: white; }
+        .test { margin: 20px 0; padding: 20px; background: #2a2a2a; border-radius: 8px; }
+        img { max-width: 200px; margin: 10px; border: 2px solid #4caf50; }
+        .error { color: #ff4444; }
+        .success { color: #4caf50; }
+        .info { color: #ffaa00; }
+    </style>
+</head>
+<body>
+    <h1>Vérification des Images</h1>
+    <div id="info" class="info"></div>
+    
+    <div class="test">
+        <h2>Test: /static/images/logo.png</h2>
+        <img id="img1" src="/static/images/logo.png" alt="Logo" 
+             onload="showSuccess(1, this)" 
+             onerror="showError(1, this)">
+        <div id="result1"></div>
+    </div>
+    
+    <div class="test">
+        <h2>Test: /static/images/directeur.png</h2>
+        <img id="img2" src="/static/images/directeur.png" alt="Directeur"
+             onload="showSuccess(2, this)"
+             onerror="showError(2, this)">
+        <div id="result2"></div>
+    </div>
+    
+    <script>
+    // #region agent log
+    const logEndpoint = 'http://127.0.0.1:7244/ingest/476dbfcd-be7f-4e55-87ca-f67a69dfc239';
+    function log(msg, data, hypothesisId) {
+        fetch(logEndpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                location: 'check-images.html',
+                message: msg,
+                data: data || {},
+                timestamp: Date.now(),
+                sessionId: 'debug-session',
+                runId: 'run1',
+                hypothesisId: hypothesisId || 'A'
+            })
+        }).catch(() => {});
+    }
+    
+    log('Page check-images chargée', {
+        baseURL: window.location.origin,
+        pathname: window.location.pathname,
+        protocol: window.location.protocol,
+        href: window.location.href
+    }, 'B');
+    // #endregion
+    
+    document.getElementById('info').innerHTML = 
+        '<p><strong>URL actuelle:</strong> ' + window.location.href + '</p>' +
+        '<p><strong>Base URL:</strong> ' + window.location.origin + '</p>';
+    
+    function showSuccess(num, img) {
+        const result = document.getElementById('result' + num);
+        result.innerHTML = '<span class="success">✓ Image chargée</span><br>' +
+            'Dimensions: ' + img.naturalWidth + 'x' + img.naturalHeight + '<br>' +
+            'Source: ' + img.src;
+        // #region agent log
+        log('Image chargée avec succès', {
+            testNum: num,
+            src: img.src,
+            currentSrc: img.currentSrc,
+            width: img.naturalWidth,
+            height: img.naturalHeight
+        }, 'B');
+        // #endregion
+    }
+    
+    function showError(num, img) {
+        const result = document.getElementById('result' + num);
+        result.innerHTML = '<span class="error">✗ Erreur de chargement</span><br>' +
+            'Source tentée: ' + img.src + '<br>' +
+            'Current src: ' + (img.currentSrc || 'N/A');
+        // #region agent log
+        log('Erreur chargement image', {
+            testNum: num,
+            attemptedSrc: img.src,
+            currentSrc: img.currentSrc
+        }, 'A');
+        // #endregion
+        
+        // Test avec fetch pour voir le code de statut
+        fetch(img.src)
+            .then(r => {
+                // #region agent log
+                log('Fetch test résultat', {
+                    testNum: num,
+                    status: r.status,
+                    statusText: r.statusText,
+                    ok: r.ok,
+                    type: r.type,
+                    url: r.url
+                }, 'A');
+                // #endregion
+                result.innerHTML += '<br>Code HTTP: ' + r.status + ' ' + r.statusText;
+            })
+            .catch(e => {
+                // #region agent log
+                log('Fetch erreur', {testNum: num, error: e.message}, 'A');
+                // #endregion
+                result.innerHTML += '<br>Erreur fetch: ' + e.message;
+            });
+    }
+    </script>
+</body>
+</html>
+
